@@ -3,10 +3,12 @@
   - `docker compose up -d`
 
 ## Run frontend:
+  - copy `.env.example` into `.env`
   - `npm i`
   - `npm run dev`
 
 ## Run backend:
+  - copy `.env.example` into `.env`
   - `npm i`
   - `npm run dev`
 
