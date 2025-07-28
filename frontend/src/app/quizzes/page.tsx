@@ -2,19 +2,14 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Trash2 } from "lucide-react";
-import {
-  GetQuizzesResponse,
-  useDeleteQuizService,
-  useGetQuizzesService,
-} from "@/services/api/quiz";
+import { GetQuizzesResponse, useGetQuizzesService } from "@/services/api/quiz";
 import Button from "@/components/button";
+import QuizItem from "@/components/quiz-item";
 
 export default function QuizzesPage() {
   const [quizzes, setQuizzes] = useState<GetQuizzesResponse>([]);
   const [loading, setLoading] = useState(true);
   const getQuizzes = useGetQuizzesService();
-  const deleteQuiz = useDeleteQuizService();
 
   useEffect(() => {
     getQuizzes()
@@ -25,16 +20,6 @@ export default function QuizzesPage() {
         setLoading(false);
       });
   }, [getQuizzes]);
-
-  const handleDelete = async (id: string) => {
-    const confirmed = confirm("Are you sure you want to delete this quiz?");
-    if (!confirmed) return;
-
-    try {
-      await deleteQuiz(id);
-      setQuizzes((prev) => prev.filter((quiz) => quiz.id !== id));
-    } catch {}
-  };
 
   if (loading) {
     return <p className="p-4 text-center">Loading quizzes...</p>;
@@ -52,28 +37,11 @@ export default function QuizzesPage() {
           <Button>Create quiz</Button>
         </Link>
       </div>
-      <ul className="space-y-3">
+      <div className="flex flex-col gap-1">
         {quizzes.map((quiz) => (
-          <li
-            key={quiz.id}
-            className="flex justify-between items-center border rounded-lg p-4 hover:bg-gray-50 transition"
-          >
-            <Link href={`/quizzes/${quiz.id}`} className="flex flex-col">
-              <span className="text-lg font-medium">{quiz.title}</span>
-              <span className="text-sm text-gray-500">
-                {quiz.questionCount} questions
-              </span>
-            </Link>
-            <button
-              onClick={() => handleDelete(quiz.id)}
-              className="text-red-500 hover:text-red-700 p-2"
-              title="Delete quiz"
-            >
-              <Trash2 size={18} />
-            </button>
-          </li>
+          <QuizItem key={quiz.id} {...quiz} setQuizzes={setQuizzes} />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
