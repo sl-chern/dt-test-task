@@ -1,3 +1,4 @@
+import { nodeEnv } from "src/utils/constants";
 import { z } from "zod";
 
 export const environmentVariablesSchema = z.object({
